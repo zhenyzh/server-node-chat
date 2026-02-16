@@ -1,1 +1,1 @@
-export * from "./async-controller";
+export * from "./async-handler";
