@@ -1,6 +1,6 @@
 import { asyncController } from "@/utils";
 
-class UserController {
+export class UserController {
   registration = asyncController(async (req, res) => {});
   login = asyncController(async (req, res) => {});
   logout = asyncController(async (req, res) => {});
@@ -13,5 +13,3 @@ class UserController {
     }
   });
 }
-
-export const userController = new UserController();
