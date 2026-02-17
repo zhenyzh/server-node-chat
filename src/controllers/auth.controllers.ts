@@ -1,5 +1,4 @@
 import { AuthService } from "@/service/auth.service";
-import type { UserDto } from "@/models/user";
 import { asyncHandler, TOKEN_LIFETIME, HTTP_STATUS } from "@/utils";
 
 export class AuthControllers {
