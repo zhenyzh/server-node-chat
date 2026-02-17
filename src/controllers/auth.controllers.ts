@@ -6,7 +6,7 @@ export class AuthControllers {
   private authService = new AuthService();
 
   registration = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body as UserDto;
+    const { name, email, password } = req.body;
     const userData = await this.authService.registration({
       name,
       email,
