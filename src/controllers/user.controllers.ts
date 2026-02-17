@@ -1,15 +1,20 @@
-import { asyncHandler } from "@/utils";
+import { asyncHandler, TOKEN_LIFETIME, HTTP_STATUS } from "@/utils";
+import { UserService } from "@/service/user.service";
 
 export class UserController {
-  registration = asyncHandler(async (req, res) => {});
-  login = asyncHandler(async (req, res) => {});
-  logout = asyncHandler(async (req, res) => {});
-  refresh = asyncHandler(async (req, res) => {});
-  getUsers = asyncHandler(async (req, res) => {
-    try {
-      res.json(["123", "777"]);
-    } catch (e) {
-      console.log(e);
-    }
+  private userService = new UserService();
+
+  registration = asyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
+    const userData = await this.userService.registration({
+      name,
+      email,
+      password,
+    });
+    res.cookie("refreshToken", userData.refreshToken, {
+      maxAge: TOKEN_LIFETIME.REFRESH.MILLISECONDS,
+      httpOnly: true,
+    });
+    return res.status(HTTP_STATUS.CREATED).json(userData);
   });
 }

@@ -1,8 +1,10 @@
 import express from "express";
+import mongoose from "mongoose";
+
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
-import mongoose from "mongoose";
+
 import router from "./router";
 
 const app = express();

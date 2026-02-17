@@ -2,9 +2,9 @@ import { Router } from "express";
 
 const authRouter = Router();
 
-// authRouter.post("/registration", userController.registration);
-// authRouter.post("/login", userController.login);
-// authRouter.post("/logout", userController.logout);
-// authRouter.get("/refresh", userController.refresh);
+// authRouter.post("/registration", authController.registration);
+// authRouter.post("/login", authController.login);
+// authRouter.post("/logout", authController.logout);
+// authRouter.get("/refresh", authController.refresh);
 
-export default authRouter;
+export { authRouter };
