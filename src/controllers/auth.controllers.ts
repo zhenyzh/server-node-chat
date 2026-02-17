@@ -1,13 +1,13 @@
-import { UserService } from "@/service/user.service";
+import { AuthService } from "@/service/auth.service";
 import type { UserDto } from "@/models/user";
 import { asyncHandler, TOKEN_LIFETIME, HTTP_STATUS } from "@/utils";
 
-export class UserController {
-  private userService = new UserService();
+export class AuthControllers {
+  private authService = new AuthService();
 
   registration = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body as UserDto;
-    const userData = await this.userService.registration({
+    const userData = await this.authService.registration({
       name,
       email,
       password,

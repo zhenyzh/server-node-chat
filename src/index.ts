@@ -4,7 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import router from "./router";
-import { errorMiddlewares } from "@/middlewares";
+import { errorMiddlewares } from "@/middlewares/error-middlewares";
 
 const app = express();
 
