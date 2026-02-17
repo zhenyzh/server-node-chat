@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { type UserDto, UserModel } from "@/models/user";
 import { TokenService } from "@/service/token.service";
+import { ApiError } from "@/utils";
 
 export class UserService {
   async registration({ name, email, password }: UserDto) {
@@ -8,7 +9,9 @@ export class UserService {
 
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
-      throw new Error(`Пользователь с таким email ${email} уже существует`);
+      throw ApiError.badRequest(
+        `Пользователь с таким email ${email} уже существует`,
+      );
     }
 
     const hashPassword = await bcrypt.hash(password, 3);
