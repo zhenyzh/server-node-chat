@@ -1,6 +1,6 @@
-import type { HydratedDocument } from "mongoose";
+import type { Document } from "mongoose";
 
-export type IUser = HydratedDocument<UserBase>;
+export type IUser = UserBase & Document;
 
 export type UserDto = UserBase;
 

@@ -6,11 +6,7 @@ export class AuthControllers {
 
   registration = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
-    const userData = await this.authService.registration({
-      name,
-      email,
-      password,
-    });
+    const userData = await this.authService.registration(name, email, password);
     res.cookie("refreshToken", userData.refreshToken, {
       maxAge: TOKEN_LIFETIME.REFRESH.MILLISECONDS,
       httpOnly: true,
@@ -20,7 +16,7 @@ export class AuthControllers {
 
   login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const userData = await this.authService.login({ email, password });
+    const userData = await this.authService.login(email, password);
 
     res.cookie("refreshToken", userData.refreshToken, {
       maxAge: TOKEN_LIFETIME.REFRESH.MILLISECONDS,

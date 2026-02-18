@@ -6,7 +6,7 @@ import { ApiError } from "@/utils";
 export class AuthService {
   private tokenService = new TokenService();
 
-  async registration({ name, email, password }: UserDto) {
+  async registration(name: string, email: string, password: string) {
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
       throw ApiError.badRequest(
@@ -41,11 +41,13 @@ export class AuthService {
     };
   }
 
-  async login({ email, password }: { email: string; password: string }) {
-    const user = await UserModel.findOne({ email });
+  async login(email: string, password: string) {
+    const user = await UserModel.findOne({ email }).orFail();
+
     if (!user) {
       throw ApiError.badRequest("Пользователь с таким email не найден");
     }
+
     const isPasswordEquals = await bcrypt.compare(password, user.password);
     if (!isPasswordEquals) {
       throw ApiError.badRequest("Неверный пароль");
