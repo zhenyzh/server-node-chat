@@ -4,9 +4,9 @@ import { TokenService } from "@/service/token.service";
 import { ApiError } from "@/utils";
 
 export class AuthService {
-  async registration({ name, email, password }: UserDto) {
-    const tokenService = new TokenService();
+  private tokenService = new TokenService();
 
+  async registration({ name, email, password }: UserDto) {
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
       throw ApiError.badRequest(
@@ -28,12 +28,41 @@ export class AuthService {
       email: user.email,
     };
 
-    const tokens = tokenService.generateTokens({
+    const tokens = this.tokenService.generateTokens({
       id: userDto.id,
       email: userDto.email,
     });
 
-    await tokenService.saveToken(user._id, tokens.refreshToken);
+    await this.tokenService.saveToken(user._id, tokens.refreshToken);
+
+    return {
+      ...tokens,
+      user: userDto,
+    };
+  }
+
+  async login({ email, password }: { email: string; password: string }) {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      throw ApiError.badRequest("Пользователь с таким email не найден");
+    }
+    const isPasswordEquals = await bcrypt.compare(password, user.password);
+    if (!isPasswordEquals) {
+      throw ApiError.badRequest("Неверный пароль");
+    }
+
+    const userDto = {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+    };
+
+    const tokens = this.tokenService.generateTokens({
+      id: userDto.id,
+      email: userDto.email,
+    });
+
+    await this.tokenService.saveToken(user._id, tokens.refreshToken);
 
     return {
       ...tokens,
