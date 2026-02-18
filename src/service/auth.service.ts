@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { UserModel } from "@/models/user";
+import type { JWTPayload } from "@/models/token";
 import { TokenService } from "@/service/token.service";
 import { ApiError } from "@/utils";
 
@@ -33,7 +34,7 @@ export class AuthService {
       email: userDto.email,
     });
 
-    await this.tokenService.saveToken(user._id, tokens.refreshToken);
+    await this.tokenService.saveToken(userDto.id, tokens.refreshToken);
 
     return {
       ...tokens,
@@ -42,7 +43,7 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const user = await UserModel.findOne({ email }).orFail();
+    const user = await UserModel.findOne({ email });
 
     if (!user) {
       throw ApiError.badRequest("Пользователь с таким email не найден");
@@ -64,7 +65,7 @@ export class AuthService {
       email: userDto.email,
     });
 
-    await this.tokenService.saveToken(user._id, tokens.refreshToken);
+    await this.tokenService.saveToken(userDto.id, tokens.refreshToken);
 
     return {
       ...tokens,
@@ -74,5 +75,43 @@ export class AuthService {
 
   async logout(refreshToken: string) {
     return await this.tokenService.removeToken(refreshToken);
+  }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw ApiError.unauthorized();
+    }
+    const userData = this.tokenService.validateRefreshToken(
+      refreshToken,
+    ) as JWTPayload | null;
+
+    const tokenFromDb = await this.tokenService.findToken(refreshToken);
+
+    if (!userData || !tokenFromDb) {
+      throw ApiError.unauthorized();
+    }
+
+    const user = await UserModel.findById(userData.id);
+
+    if (!user) {
+      throw ApiError.unauthorized();
+    }
+
+    const userDto = {
+      id: user.id,
+      email: user.email,
+    };
+
+    const tokens = this.tokenService.generateTokens({
+      id: user.id,
+      email: user.email,
+    });
+
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+
+    return {
+      ...tokens,
+      user: userDto,
+    };
   }
 }

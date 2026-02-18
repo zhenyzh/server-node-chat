@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { Types } from "mongoose";
 import { type JWTPayload, TokenModel } from "@/models/token";
 import { TOKEN } from "@/utils";
 
@@ -16,7 +15,23 @@ export class TokenService {
     return { accessToken, refreshToken };
   }
 
-  async saveToken(userId: Types.ObjectId, refreshToken: string) {
+  validateAccessToken(token: string) {
+    try {
+      return jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  validateRefreshToken(token: string) {
+    try {
+      return jwt.verify(token, process.env.JWT_REFRESH_SECRET!);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async saveToken(userId: string, refreshToken: string) {
     const tokenData = await TokenModel.findOne({ user: userId });
     if (tokenData) {
       tokenData.refreshToken = refreshToken;
@@ -28,5 +43,9 @@ export class TokenService {
 
   async removeToken(refreshToken: string) {
     return TokenModel.deleteOne({ refreshToken });
+  }
+
+  async findToken(refreshToken: string) {
+    return TokenModel.findOne({ refreshToken });
   }
 }
