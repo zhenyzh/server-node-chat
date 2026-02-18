@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { type UserDto, UserModel } from "@/models/user";
+import { UserModel } from "@/models/user";
 import { TokenService } from "@/service/token.service";
 import { ApiError } from "@/utils";
 
@@ -70,5 +70,9 @@ export class AuthService {
       ...tokens,
       user: userDto,
     };
+  }
+
+  async logout(refreshToken: string) {
+    return await this.tokenService.removeToken(refreshToken);
   }
 }

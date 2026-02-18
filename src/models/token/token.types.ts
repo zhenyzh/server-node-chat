@@ -1,6 +1,6 @@
-import { Types, type HydratedDocument } from "mongoose";
+import { Types, Document } from "mongoose";
 
-export type IToken = HydratedDocument<TokenBase>;
+export type IToken = TokenBase & Document;
 
 export type TokenBase = {
   user: Types.ObjectId;

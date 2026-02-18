@@ -1,16 +1,16 @@
 import jwt from "jsonwebtoken";
-import { type JWTPayload, TokenModel } from "@/models/token";
 import { Types } from "mongoose";
-import { TOKEN_LIFETIME } from "@/utils";
+import { type JWTPayload, TokenModel } from "@/models/token";
+import { TOKEN } from "@/utils";
 
 export class TokenService {
   generateTokens(payload: JWTPayload) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET!, {
-      expiresIn: TOKEN_LIFETIME.ACCESS.STRING,
+      expiresIn: TOKEN.ACCESS.STRING,
     });
 
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET!, {
-      expiresIn: TOKEN_LIFETIME.REFRESH.STRING,
+      expiresIn: TOKEN.REFRESH.STRING,
     });
 
     return { accessToken, refreshToken };
@@ -24,5 +24,9 @@ export class TokenService {
     }
 
     return await TokenModel.create({ user: userId, refreshToken });
+  }
+
+  async removeToken(refreshToken: string) {
+    return TokenModel.deleteOne({ refreshToken });
   }
 }
